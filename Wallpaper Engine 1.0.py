@@ -96,7 +96,7 @@ def delete_video():
             else:
                 delete_list.append(delete_path[0])
                 # print(delete_path[0])
-        random_video()
+            random_video()
 
 
 # 即将关闭
