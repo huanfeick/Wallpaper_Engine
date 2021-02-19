@@ -74,30 +74,34 @@ def random_video():
     for item in list_history:
         listbox_history.insert(0, item)
     i = i + 1
-    delete_path = os.path.dirname(path_list[rand[i - 1]])
+    delete_path = os.path.dirname(path_list[rand[i - 1]]), path_list[rand[i - 1]]
 
 
 def buttonList(event):
     global delete_path
     video_name = listbox_history.get(listbox_history.curselection())  # 获取点击的视频名称
     video_play(history_dict[video_name])  # 查找字典播放视频
-    delete_path = os.path.dirname(history_dict[video_name])
+    delete_path = os.path.dirname(history_dict[video_name]), history_dict[video_name]
 
 
-# 删除播放视频的路径
+# 删除按钮
 def delete_video():
     if delete_path == 0:
         tkinter.messagebox.showinfo("提示", "请先观看一个视频")
     else:
-        if delete_path.find("Xunlei") != -1:
-            print("此视频不属于Wallpaper Engine")
-        else:
-            if tkinter.messagebox.askyesno('提示', '确定要删除?'):
-                delete_list.append(delete_path)
+        if tkinter.messagebox.askyesno('提示', '确定要删除?'):
+            if delete_path[1].find("Xunlei") != -1:
+                # print(delete_path[1])
+                delete_list.append(delete_path[1])
+            else:
+                delete_list.append(delete_path[0])
+                # print(delete_path[0])
+        random_video()
 
 
+# 即将关闭
 def callbackClose():
-    set_delete_list = set(delete_list)
+    set_delete_list = list(set(delete_list))
     if len(set_delete_list) == 0:
         sys.exit(0)
     else:
@@ -105,8 +109,14 @@ def callbackClose():
         close = tkinter.messagebox.askyesnocancel("提示", "将删除以上内容")
         if close:
             for a in range(0, len(set_delete_list)):
-                shutil.rmtree(set_delete_list[a])
-                sys.exit(0)
+                # 检测是文件还是文件夹
+                if set_delete_list[a].find("mp4") != -1:
+                    os.remove(set_delete_list[a])
+                    print("删除文件")
+                else:
+                    shutil.rmtree(set_delete_list[a])
+                    print("删除文件夹")
+            sys.exit(0)
         if close is None:
             pass
         else:
